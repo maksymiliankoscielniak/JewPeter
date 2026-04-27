@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from model import StockModel
@@ -6,10 +7,10 @@ import requests
 
 app = FastAPI(title="JewPeter API")
 
-# Enable CORS
+# Enable CORS - in production you should specify the exact origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # Allow all for simplicity, but can be restricted to github.io later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,11 +66,13 @@ async def search_ticker(q: str):
                     "name": quote.get('longname') or quote.get('shortname') or quote['symbol'],
                     "type": quote.get('quoteType', 'Unknown')
                 })
-        return results[:5] # Return top 5 matches
+        return results[:5]
     except Exception as e:
         print(f"Search error: {e}")
         return []
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Render provides the port via the PORT environment variable
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

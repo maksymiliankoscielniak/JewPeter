@@ -4,7 +4,7 @@ import Starfield from './components/Starfield';
 import StockChart from './components/StockChart';
 import { Search, TrendingUp, TrendingDown, DollarSign, Calendar, Info } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 
 function App() {
   const [ticker, setTicker] = useState('AAPL');
